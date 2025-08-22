@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-
+require('dotenv').config()
 
 
 
@@ -19,10 +19,9 @@ app.get('/login', function(req,res){
 })
 
 
-app.listen(10000, function(){
+app.listen(process.env.PORT, function(){
     console.log("Server Starting on Port 3000")
 })
-
 
 
 
