@@ -1,0 +1,672 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HiChat Admin Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      display: flex;
+      height: 100vh;
+      background: #f5f6fa;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+   
+.sidebar {
+  width: 260px;
+  background: #fff;
+  color: #0a2d82;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  position: fixed;
+  left: -260px;
+  top: 0;              
+  height: 100%;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+.sidebar.active {
+  left: 0;
+}
+.sidebar h2 {
+  font-weight: 700;
+  margin-top: 15px;
+  color: #0a2d82; 
+}
+.sidebar p {
+  opacity: 0.85;
+  font-size: 14px;
+  margin-bottom: 30px;
+  color: #0a2d82;
+}
+.sidebar ul {
+  list-style: none;
+  flex: 1;
+}
+.sidebar ul a {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin: 6px 0;
+  border-radius: 8px;
+  color: #0a2d82; 
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.sidebar ul a i {
+  margin-right: 12px;
+  color: #0a2d82; 
+}
+.sidebar ul a:hover {
+  background: #e8eaf6; 
+}
+/* .logout {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: auto;    
+  color: #0a2d82;
+}
+.logout:hover {
+  background: #f1f5ff; 
+  color: red;
+} */
+
+.logout {
+  margin-top: auto; /* keep it stuck to bottom */
+}
+
+.logout a {
+  display: flex;
+  align-items: center; /* vertically align icon + text */
+  padding: 12px;
+  border-radius: 8px;
+  color: #0a2d82;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.logout a:hover {
+  background: #f1f5ff;
+  color: red;
+}
+
+.logout i {
+  margin-right: 10px; /* space between icon and text */
+}
+
+
+
+    
+  .close-btn {
+  font-size: 22px;
+  cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 15px;
+  margin-top: -5px;    
+}
+
+    
+    .sidebar ul a::after,
+    .logout::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      transform: scale(0);
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0.5;
+      background-color: white;
+      transition: transform 0.4s ease, opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .sidebar ul a:active::after,
+    .logout:active::after {
+      transform: scale(2);
+      opacity: 0;
+    }
+
+  
+    .main {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      margin-left: 0;
+      transition: margin-left 0.3s ease;
+      width: 100%;
+    }
+    .main.shift {
+      margin-left: 260px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .topbar h1 {
+      color: #0a2d82;
+      font-weight: 700;
+    }
+    .menu-btn {
+      font-size: 22px;
+      cursor: pointer;
+      color: #0a2d82;
+    }
+
+    
+    .stats {
+      display: grid;
+      /* grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); */
+      grid-template-columns: 1fr;
+      gap: 20px;
+      justify-content: center;
+      align-items: center;
+      max-width: 1000px; /* keeps layout from stretching too much */
+
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      display: inline-block;
+      vertical-align: top;
+      justify-content: center;
+      align-items: center;
+       
+    }
+    /* .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    } */
+    .card h3 {
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #0a2d82;
+    }
+  .card p {
+  width: 80px;          
+  height: 80px;         
+  border: 2px solid black;
+  border-radius: 50%;  
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-left: 35%;
+  display: flex;        
+  align-items: center;
+  justify-content: center;
+}
+
+
+    /* Table */
+    .table-container {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: box-shadow 0.3s ease;
+    }
+    .table-container:hover {
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    }
+    .table-container h2 {
+      padding: 16px;
+      background: #0a2d82;
+      color: #fff;
+      font-weight: 500;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 14px;
+      text-align: left;
+    }
+    th {
+      background: #e8eaf6;
+      font-weight: 600;
+      color: #0a2d82;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover {
+      background: #f1f5ff;
+      transition: background 0.3s ease;
+    }
+
+
+
+
+    /* Sidebar submenu */
+.submenu a {
+  display: flex;
+  /* justify-content: ; */
+  align-items: center;
+  color: #fff;
+  padding: 12px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.submenu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.submenu-list {
+  display: none;
+  list-style: none;
+  padding-left: 0px;
+}
+
+.submenu-list li a {
+  font-size: 14px;
+  color: #545454;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.submenu-list li a:hover {
+  color: #a3a3a3;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+}
+
+/* Caret animation */
+.caret-icon {
+  transition: transform 0.3s ease;
+  margin-left: 50%;
+}
+
+.rotate {
+  transform: rotate(-180deg);
+}
+
+
+
+.adduser-container {
+  max-width: 1000px;        
+  margin: auto;            
+  margin-top: -4%;          
+  background: #fff;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
+}
+
+.adduser-container h1 {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: #001a80;     /* deep blue */
+  margin-bottom: 20px;
+}
+
+.adduser-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.adduser-container input {
+  padding: 14px;
+  border: none;
+  outline: none;
+  border-radius: 30px;
+  background: #f5f5f5;
+  font-size: 14px;
+  transition: 0.3s ease;
+  width: 100%;          /* full width */
+}
+
+.adduser-container input:focus {
+  background: #eef2ff;
+  border: 1px solid #0a2d82;
+}
+
+.adduser-container button {
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  background: #001a80;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.adduser-container button:hover {
+  background: #0026b3;
+}
+
+
+   
+@media (max-width: 768px) {
+  .sidebar {
+    width: 220px; 
+  }
+  .main.shift {
+    margin-left: 0; 
+  }
+  .stats {
+    grid-template-columns: 1fr; 
+  }
+  .table-container {
+    overflow-x: auto; 
+  }
+
+  .adduser-container{
+    width: 320px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-left: -2%;
+    padding: 25px;
+    margin-top: 5%;
+  }
+  .adduser-container input{
+    padding: 19px;
+    
+  }
+  .adduser-container form{
+    gap: 7px;
+  }
+  .adduser-container button{
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 200px; 
+  }
+  .topbar h1 {
+    font-size: 18px; 
+  }
+  .menu-btn {
+    font-size: 20px;
+  }
+  .card p {
+    font-size: 18px;
+  }
+    .logout {
+    padding: 10px;
+    font-size: 18px;
+  }
+  .logout i {
+    margin-right: 8px;
+  }
+}
+
+
+@media (min-width: 1024px) {
+  .logout a{
+    text-decoration: none;
+    
+    
+  }
+  .logout i{
+    margin-right: 3%;
+
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); /* 3 cards side by side */
+    gap: 30px;
+    justify-content: center;  /* centers the grid */
+    align-items: center;
+    padding: 20px;
+    max-width: 1200px; /* keeps from stretching too much */
+    margin: 0 auto; /* centers the whole grid */
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers circle + text */
+    justify-content: center;
+    text-align: center;
+    width: 550px;
+  }
+
+  .circle {
+    width: 120px;  /* adjust size */
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px; /* control text size */
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    margin: 0; 
+    font-size: 16px;
+  }
+  .menu-btn.hidden {
+  visibility: hidden; 
+}
+
+}
+
+
+  </style>
+</head>
+<body>
+
+  
+  <div class="sidebar" id="sidebar">
+    <span class="close-btn" id="closeBtn"><i class="fa-solid fa-xmark"></i></span>
+    <div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAMAAABC4vDmAAAAY1BMVEX///8AAAAEBAQ5OTn8/Pz5+fn19fUICAjv7+9oaGgXFxeampo9PT0mJibNzc3o6OhRUVHU1NSSkpLBwcFKSkrf39+mpqasrKy1tbU0NDRERER7e3tfX190dHSEhIRWVlYeHh6b0ZfdAAAEFklEQVR4nO2aiZaiMBBFE7pIQHYQRMft/79yKgmg3QqoDcmcM3VtN0R4XUkqr4KMEQRBEARBEARBEARBEARBuADMHe7ed5ucgef24YcE9d53K0urgiyNwny/z8MozUBrcggKEAyKKN/wjk0eFcAEuIsUMIxJFsWce3jj3VMcZRg/Z6pQFKQXpUX9Sdm/OqbgQhT0T9WemxB1mBf76raHbVk+qw78KYdKtaztaKmBD6w4cM97lITbDoX63DJ64Pshnl8+ipKoKvTZzwxmQZRgrOVPA2W2tgx3sS3KZ1mOZx8R5fE8s50X1OTC2s0zQUMabU2/swmw4M+UJs7/BNZHH7A6nhYV1w5SQjHZejgGC2Z3CtRdaloT5ztmNyeoEERzoiKLgrQojEA5J6p0MPW9IMr+TLOb71N2RamTVXOiKpuKOlHF17Smr8K6KMzox2lRR9sZ3VfTH+YEOean0NBEqqqxW9iAbj+PP3cJeItrAN9ySkCLh0lBPvUunrJ+Jdopu6LAGKr4uaFSG+NMVzQ2mw+M162SsV6eqHxgu1RWqgBgdP6LAJjlQHUIJkrO++L4/qEUysO7AUPRdNWoLmpkV4s27qp2XRiIast1vjJBUtq2lXDTchqz6uM3+Z0H3eSNb9aHHInSwlBXUJXHONlskvhYVgEqcrpiBkYUDsOgLtK0qAN8aUS5Xcljj8uL/wgAtzsxDnYk8H1zp1hNAiIr1OgrMuE2G/idgcnS5rRNuqUzmWxPTZr5xkZY9njMR5OH5wyq8+VhSWFzOWMKBb2LVU06UkG0vRpTd3s0k+B1GwU6UlZV4Siry6txmZ6ekQdF3ZZrWVseiugOdrFxLNL4lt5KKfcijYeJd5YXPdNQ6prFu7d3XRN6vPtIhqklOSo/BruEj60M9+hPk11gJZ8qq3K+zigadF3PgZXM4Geh6dgzsrr+H2brj0AcdSEfutKsLPwL6/XbD+PkmXpTTvcpaSpVD2O1ohz9/4qQfx9w0+2nH0IxfH1xlM0NyuEy6GvonbEMhHXKZT1ntIkaU++J8njSrnYBFxuh2HP5Uh//1oiS7wu2UsmMc8tJn+Y9UXrv00ozDmrS163ektTFim/alVSJLL87zRuKFHm20opHI98PUy9NNitF6vBB2w3xOqwTqfZjTfqL7RqaIBwM5vuomXkNUZijfhWp/dJXINQ833wqqKdZeK0BJy6VOD8OlP7qKVi45gJWfz72Og71kpHSR0r5q95uNFTpcLClZO36Q38qSV/pXnItFI90/jREN86Li7r8TpAK1XHRcksd6aDr8d/At7DoBUAQYvTa0OtcxZIlIB5KzPyI5BU8sWj6xEo933/9lm22qHtZyHYsu161UIHk9ve7BEEQBEEQBEEQBEEQBEH8B/wFPeIlBYcTZswAAAAASUVORK5CYII=" alt="Admin" width="80">
+      <h2><%= user %> </h2>
+      <p>Welcome <%= user %> </p><hr>
+  
+      <ul>
+
+  <li class="submenu">
+    <a href="javascript:void(0)" id="usersMenuBtn">
+      <i class="fa-solid fa-user"></i> Users 
+      <i class="fa-solid fa-caret-down caret-icon"></i>
+    </a>
+    <ul class="submenu-list" id="usersSubmenu">
+      <li>
+        <a href="/admin-dashboard/users">
+          <i class="fa-solid fa-users"></i> All Users
+        </a>
+      </li>
+      <li>
+        <a href="/admin-dashboard/adduser">
+          <i class="fa-solid fa-user-plus"></i> Add User
+        </a>
+      </li>
+    </ul>
+  </li>
+  <hr>
+
+  <li><a href="/chatsdata"><i class="fa-solid fa-comments"></i> Chats</a></li><hr>
+  <li><a href="/groupsdata"><i class="fa-solid fa-users"></i> Groups</a></li><hr>
+  <li><a href="/notificationdata"><i class="fa-solid fa-bell"></i> Notifications</a></li><hr>
+  <li><a href="/settings"><i class="fa-solid fa-gear"></i> Settings</a></li><hr>
+</ul>
+
+    </div>
+<div class="logout">
+  <a href="/login"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+</div>
+
+
+
+  </div>
+
+ 
+  <div class="main" id="main">
+    <div class="topbar">
+      <span class="menu-btn" id="menuBtn"><i class="fa-solid fa-bars"></i></span>
+      <h1>Admin Dashboard</h1>
+    </div>
+
+
+    <% if (page === "dashboard") { %>
+    <div class="stats">
+      <div class="card">
+        <h3>Total Users</h3>
+        <p><%= totalusers %></p>
+      </div>
+    </div>
+<% } else if (page === "users") { %>
+    <div class="table-container">
+      <h2>All Users</h2>
+      <table>
+        <tr><th>Username</th><th>Role</th></tr>
+        <% users.forEach(u => { %>
+          <tr>
+            <td><%= u.username %></td>
+            <td><%= u.role %></td>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+<% } else if (page === "adduser"){ %>
+
+  
+ 
+  <div class="adduser-container">
+ 
+    <h1>Add New User</h1>
+
+  <form action="/admin-dashboard/adduser" method="post">
+  <input type="name" placeholder="Name" name="name"><br>
+  <input type="text" placeholder="User Name" name="username"><br>
+  <input type="email" placeholder="Email" name="email"><br>
+  <input type="password" placeholder="Password" name="password"><br>
+  <input type="password" placeholder="Confirm Password" name="confirmpassword"><br>
+
+  <button>Create User &raquo;</button>
+
+  </form>
+  </div>
+
+  <% } %>
+
+
+   
+  <script>
+    const sidebar = document.getElementById("sidebar");
+    const main = document.getElementById("main");
+    const menuBtn = document.getElementById("menuBtn");
+    const closeBtn = document.getElementById("closeBtn");
+
+  
+//     menuBtn.addEventListener("click", () => {
+//   sidebar.classList.add("active");
+  
+
+//   if (window.innerWidth > 768) {
+//     main.classList.add("shift"); 
+//   }
+// });
+
+// closeBtn.addEventListener("click", () => {
+//   sidebar.classList.remove("active");
+//   main.classList.remove("shift");
+// });
+menuBtn.addEventListener("click", () => {
+  sidebar.classList.add("active");
+  menuBtn.classList.add("hidden"); // hide hamburger
+
+  if (window.innerWidth > 768) {
+    main.classList.add("shift"); 
+  }
+});
+
+closeBtn.addEventListener("click", () => {
+  sidebar.classList.remove("active");
+  main.classList.remove("shift");
+  menuBtn.classList.remove("hidden"); // show hamburger again
+});
+
+
+  // Animate number count up inside circles
+  document.querySelectorAll(".card p").forEach(circle => {
+    let target = +circle.textContent;   // final value
+    let current = 0;                    // start value
+    let increment = Math.ceil(target / 30); // speed factor
+    circle.textContent = 0;             // reset first
+
+    let counter = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        current = target;
+        clearInterval(counter);
+      }
+      circle.textContent = current;
+    }, 40); // speed of update (ms)
+  });
+
+
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const usersMenuBtn = document.getElementById("usersMenuBtn");
+  const usersSubmenu = document.getElementById("usersSubmenu");
+  const caretIcon = usersMenuBtn.querySelector(".caret-icon");
+
+  usersMenuBtn.addEventListener("click", () => {
+    if (usersSubmenu.style.display === "block") {
+      usersSubmenu.style.display = "none";
+      caretIcon.classList.remove("rotate");
+    } else {
+      usersSubmenu.style.display = "block";
+      caretIcon.classList.add("rotate");
+    }
+  });
+});
+
+
+    
+  </script>
+
+</body>
+</html>
